@@ -1,0 +1,18 @@
+Description: move changes in source files to patches
+Author: Thorsten Alteholz <debian@alteholz.de>
+Last-Update: 03 Mar 2012
+Forwarded: patch is from upstream
+
+Index: astronomical-almanach/aa.c
+===================================================================
+--- astronomical-almanach.orig/aa.c	2012-03-02 11:52:02.000000000 +0100
++++ astronomical-almanach/aa.c	2012-03-02 11:52:30.000000000 +0100
+@@ -37,7 +37,7 @@
+  */
+ #include "kep.h"
+ 
+-#ifdef __BORLANDC__
++#if __BORLANDC__ || __STDC__
+ #include <stdlib.h>
+ #endif
+ 

@@ -1,0 +1,18 @@
+Description: move changes in source files to patches
+Author: Thorsten Alteholz <debian@alteholz.de>
+Last-Update: 03 Mar 2012
+Forwarded: patch is from upstream
+
+Index: astronomical-almanach/mlr404.c
+===================================================================
+--- astronomical-almanach.orig/mlr404.c	2012-03-02 12:46:10.000000000 +0100
++++ astronomical-almanach/mlr404.c	2012-03-02 12:46:37.000000000 +0100
+@@ -2618,7 +2618,7 @@
+ 
+ };
+ 
+-static char FAR args[] = {
++static char SIGNED FAR args[] = {
+   0,  3,
+   3,  4,  3, -8,  4,  3,  5,  1,
+   2,  2,  5, -5,  6,  2,

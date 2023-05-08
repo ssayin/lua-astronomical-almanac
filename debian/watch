@@ -1,0 +1,5 @@
+version=3
+
+opts="uversionmangle=s/(.)(.)/$1.$2/" \
+http://www.moshier.net/aa-(\d+).*\.zip
+

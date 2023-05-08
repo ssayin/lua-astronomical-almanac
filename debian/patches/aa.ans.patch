@@ -1,0 +1,27 @@
+Description: move changes in source files to patches
+Author: Thorsten Alteholz <debian@alteholz.de>
+Last-Update: 03 Mar 2012
+Forwarded: patch is from upstream
+
+Index: astronomical-almanach/aa.ans
+===================================================================
+--- astronomical-almanach.orig/aa.ans	2012-03-02 11:49:37.000000000 +0100
++++ astronomical-almanach/aa.ans	2012-03-02 11:50:46.000000000 +0100
+@@ -313,7 +313,7 @@
+ Calendar date: Year (1986) ? Month (1-12) (1) ? Day.fraction (1.000000) ? Time: Hours (12) ? Minutes (40) ? Seconds (0.000000) ? 1986 January 1 Wednesday  6h 09m 05.130s  UT
+ 1986 January 1 Wednesday  6h 10m 00.000s  TDT
+ Julian day 2446431.7569444
+-Enter interval between tabulations in days (1.000000) ? Number of tabulations to display (1) ? Planet number 0-9 or 88 to read star, 99 to read orbit (9) ? Name of star catalogue file:  (star.cat) ? Line number (1) ? 2000 00 08 23.265  29 05 25.58   1.039  -16.33 -12.0 0.0240   2.06 alAnd(Alpheratz)       4
++Enter interval between tabulations in days (1.000000) ? Number of tabulations to display (1) ? Planet number 0-9 or 88 to read star, 99 to read orbit (9) ? Name of star catalogue file:  (/usr/share/aa/star.cat) ? Line number (1) ? 2000 00 08 23.265  29 05 25.58   1.039  -16.33 -12.0 0.0240   2.06 alAnd(Alpheratz)       4
+ 
+ 
+                alpha Andromedae (Alpheratz)
+@@ -342,7 +342,7 @@
+ Calendar date: Year (1986) ? Month (1-12) (1) ? Day.fraction (1.000000) ? Time: Hours (6) ? Minutes (10) ? Seconds (0.000000) ? 1986 January 1 Wednesday  8h 26m 05.130s  UT
+ 1986 January 1 Wednesday  8h 27m 00.000s  TDT
+ Julian day 2446431.8520833
+-Enter interval between tabulations in days (1.000000) ? Number of tabulations to display (1) ? Planet number 0-9 or 88 to read star, 99 to read orbit (88) ? Name of orbit catalogue file:  (orbit.cat) ? Line number (1) ? 2447120.5 34.0897 267.3835 73.9085 167.4675275 0.00045478773
++Enter interval between tabulations in days (1.000000) ? Number of tabulations to display (1) ? Planet number 0-9 or 88 to read star, 99 to read orbit (88) ? Name of orbit catalogue file:  (/usr/share/aa/orbit.cat) ? Line number (1) ? 2447120.5 34.0897 267.3835 73.9085 167.4675275 0.00045478773
+ 
+ 0.994811 0.0062424619 2433282.423 5.0 0.0 Bradfield_1987s	5
+ 

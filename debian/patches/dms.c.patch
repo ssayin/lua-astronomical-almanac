@@ -1,0 +1,33 @@
+Description: move changes in source files to patches
+Author: Thorsten Alteholz <debian@alteholz.de>
+Last-Update: 03 Mar 2012
+Forwarded: patch is from upstream
+
+Index: astronomical-almanach/dms.c
+===================================================================
+--- astronomical-almanach.orig/dms.c	2012-03-02 12:28:22.000000000 +0100
++++ astronomical-almanach/dms.c	2012-03-02 12:28:43.000000000 +0100
+@@ -5,6 +5,8 @@
+ #include "kep.h"
+ #if __STDC__
+ double caltoj (long, int, double);
++#include <string.h>
++#include <stdlib.h>
+ #else
+ double caltoj();
+ #endif
+@@ -485,7 +487,13 @@
+ else
+ 	printf( "Illegal input format\n"  );
+ printf( ") ? ");
+-gets(s);
++{
++  char *str;
++  if (fgets(s,40,stdin) == NULL)
++    exit(0);
++  if ((str = strchr(s, '\n')))
++    *str=0;
++}
+ if( s[0] != '\0' )
+ 	sscanf( s, format, num );
+ return(0);

@@ -1,0 +1,30 @@
+Description: Fix rise and set time convergence failure at high southern latitudes.
+Author: Stephen Moshier
+Forwarded: patch is from upstream
+--- astronomical-almanac-5.6/altaz.c	1998-11-01 09:01:20.000000000 -0500
++++ new/altaz.c	2020-03-29 11:10:30.146608185 -0400
+@@ -22,6 +22,7 @@
+ 
+ #include "kep.h"
+ extern double tlong, tlat, glat;
++double azimuth, elevation, refracted_elevation;
+ 
+ 
+ int altaz( pol, J )
+@@ -93,12 +94,16 @@
+ az = RTD * zatan2( D, N );
+ alt = sindec * sinlat  +  cosdec * coslha * coslat;
+ alt = RTD * asin(alt);
++/* Store results */
++azimuth = az;
++elevation = alt; /* Save unrefracted value. */
+ 
+ /* Correction for atmospheric refraction
+  * unit = degrees
+  */
+ D = refrac( alt );
+ alt += D;
++refracted_elevation = alt;
+ 
+ /* Convert back to R.A. and Dec.
+  */

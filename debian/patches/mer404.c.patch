@@ -1,0 +1,18 @@
+Description: move changes in source files to patches
+Author: Thorsten Alteholz <debian@alteholz.de>
+Last-Update: 03 Mar 2012
+Forwarded: patch is from upstream
+
+Index: astronomical-almanach/mer404.c
+===================================================================
+--- astronomical-almanach.orig/mer404.c	2012-03-02 12:44:09.000000000 +0100
++++ astronomical-almanach/mer404.c	2012-03-02 12:44:32.000000000 +0100
+@@ -878,7 +878,7 @@
+ 
+ };
+ 
+-static char FAR args[] = {
++static char SIGNED FAR args[] = {
+   0,  3,
+   3,  1,  1,-10,  3, 11,  4,  0,
+   2,  2,  5, -5,  6,  2,

@@ -1,0 +1,27 @@
+Description: move changes in source files to patches
+Author: Thorsten Alteholz <debian@alteholz.de>
+Last-Update: 03 Mar 2012
+Forwarded: patch is from upstream
+
+Index: astronomical-almanach/moonrise.c
+===================================================================
+--- astronomical-almanach.orig/moonrise.c	2012-03-02 13:16:14.000000000 +0100
++++ astronomical-almanach/moonrise.c	2012-03-02 13:16:35.000000000 +0100
+@@ -3,6 +3,7 @@
+ #define STARTDATE  2448431.5
+ #define ENDDATE    2448831.5
+ 
++#include <stdlib.h>
+ #include "kep.h"
+ /* Conversion factors between degrees and radians */
+ double DTR = 1.7453292519943295769e-2;
+@@ -12,6 +13,9 @@
+ double PI = 3.14159265358979323846;
+ double TPI = 6.28318530717958647693;
+ 
++/* unused, but must be defined for rplanet.c and rstar.c */
++struct orbit *elobject;	/* pointer to orbital elements of object */
++
+ extern double PI;
+ 
+ /* Standard epochs.  Note Julian epochs (J) are measured in
