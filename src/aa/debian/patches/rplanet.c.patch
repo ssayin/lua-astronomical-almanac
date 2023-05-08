@@ -1,0 +1,18 @@
+Description: move changes in source files to patches
+Author: Thorsten Alteholz <debian@alteholz.de>
+Last-Update: 03 Mar 2012
+Forwarded: patch is from upstream
+
+Index: astronomical-almanach/rplanet.c
+===================================================================
+--- astronomical-almanach.orig/rplanet.c	2012-03-02 13:24:55.000000000 +0100
++++ astronomical-almanach/rplanet.c	2012-03-02 13:25:21.000000000 +0100
+@@ -133,7 +133,7 @@
+ 
+ 
+ extern struct orbit *elobject;
+-extern double robject[];
++static double robject[3];
+ 
+ int doplanet()
+ {

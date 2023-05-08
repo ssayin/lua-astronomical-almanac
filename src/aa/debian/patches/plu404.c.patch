@@ -1,0 +1,18 @@
+Description: move changes in source files to patches
+Author: Thorsten Alteholz <debian@alteholz.de>
+Last-Update: 03 Mar 2012
+Forwarded: patch is from upstream
+
+Index: astronomical-almanach/plu404.c
+===================================================================
+--- astronomical-almanach.orig/plu404.c	2012-03-02 13:19:42.000000000 +0100
++++ astronomical-almanach/plu404.c	2012-03-02 13:20:09.000000000 +0100
+@@ -1192,7 +1192,7 @@
+ 
+ };
+ 
+-static char FAR args[] = {
++static char SIGNED FAR args[] = {
+   0,  7,
+   2,  3,  7, -9,  9,  0,
+   2,  4,  7,-12,  9,  0,

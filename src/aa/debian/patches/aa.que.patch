@@ -1,0 +1,27 @@
+Description: move changes in source files to patches
+Author: Thorsten Alteholz <debian@alteholz.de>
+Last-Update: 03 Mar 2012
+Forwarded: patch is from upstream
+
+Index: astronomical-almanach/aa.que
+===================================================================
+--- astronomical-almanach.orig/aa.que	2012-03-02 12:00:29.000000000 +0100
++++ astronomical-almanach/aa.que	2012-03-02 12:00:50.000000000 +0100
+@@ -97,7 +97,7 @@
+ 1
+ 1
+ 88
+-star.cat
++/usr/share/aa/star.cat
+ 1
+ 1986
+ 1
+@@ -108,7 +108,7 @@
+ 1
+ 1
+ 99
+-orbit.cat
++/usr/share/aa/orbit.cat
+ 5
+ 1986
+ 1

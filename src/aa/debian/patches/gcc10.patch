@@ -1,0 +1,42 @@
+Description: make it compile with gcc10
+Author: Thorsten Alteholz <debian@alteholz.de>
+Forwarded: yes
+Index: astronomical-almanac-5.6/conjunct.c
+===================================================================
+--- astronomical-almanac-5.6.orig/conjunct.c	2020-12-10 21:51:18.000000000 +0000
++++ astronomical-almanac-5.6/conjunct.c	2020-12-10 22:04:55.681838496 +0000
+@@ -75,7 +75,7 @@
+  * of the earth at time TDT re equinox J2000
+  */
+ double FAR rearth[3];
+-double vearth[3];
++extern double vearth[3];
+ 
+ /* Corresponding polar coordinates of earth:
+  * longitude and latitude in radians, radius in au
+Index: astronomical-almanac-5.6/moonrise.c
+===================================================================
+--- astronomical-almanac-5.6.orig/moonrise.c	2020-12-10 21:51:18.000000000 +0000
++++ astronomical-almanac-5.6/moonrise.c	2020-12-10 22:08:54.047150087 +0000
+@@ -66,7 +66,7 @@
+  * of the earth at time TDT re equinox J2000
+  */
+ double FAR rearth[3];
+-double vearth[3];
++extern double vearth[3];
+ 
+ /* Corresponding polar coordinates of earth:
+  * longitude and latitude in radians, radius in au
+@@ -130,9 +130,9 @@
+ extern double r_rise;
+ extern double r_set;
+ 
+-double t_trnsit;
+-double t_rise;
+-double t_set;
++extern double t_trnsit;
++extern double t_rise;
++extern double t_set;
+ 
+ int 
+ main ()
