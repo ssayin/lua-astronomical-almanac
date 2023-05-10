@@ -184,6 +184,8 @@ extern struct orbit uranus;
 extern struct orbit neptune;
 extern struct orbit pluto;
 
+extern struct orbit* elobject;
+
 extern int f_trnsit;
 extern double r_trnsit;
 extern double r_rise;
@@ -194,6 +196,7 @@ extern double t_trnsit;
 extern double t_rise;
 extern double t_set;
 
+extern double search(double, double, double);
 extern double search_moon(double);
 
 ]])
