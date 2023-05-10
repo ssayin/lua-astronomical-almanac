@@ -47,3 +47,10 @@ target_include_directories(${PROJECT_NAME} PUBLIC aa)
 if(MATH_LIBRARY)
   target_link_libraries(${PROJECT_NAME} PUBLIC ${MATH_LIBRARY})
 endif()
+
+target_compile_definitions(
+  ${PROJECT_NAME}
+  PUBLIC $<$<CMAKE_C_COMPILER_ID:AppleClang,Clang>:"-O2">
+         $<$<CMAKE_C_COMPILER_ID:Intel,IntelLLVM>:"-O2">
+         $<$<CMAKE_C_COMPILER_ID:GNU>:"-O2">
+         $<$<CMAKE_C_COMPILER_ID:MSVC>:"/O2">)
