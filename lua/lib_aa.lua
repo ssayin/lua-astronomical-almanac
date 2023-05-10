@@ -1,7 +1,10 @@
 local ffi = require("ffi")
 
 local library_path = (function()
-	return "../build/liblua_aa.so"
+	local prefix = string.sub(package.config, 1, 1)
+	local dirname = debug.getinfo(1, "S").source:sub(2):match("(.*[/\\])")
+	local libname = prefix == "\\" and "liblua_aa.dll" or "liblua_aa.so"
+	return dirname .. "../build/" .. libname
 end)()
 
 local aa = ffi.load(library_path)
