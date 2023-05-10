@@ -1,9 +1,38 @@
+/* This program calculates orbits of planetary bodies and reduces
+ * the coordinates of planets or stars to geocentric and topocentric
+ * place.  An effort has been made to use rigorous methods throughout.
+ *
+ * References to AA page numbers are to The Astronomical Almanac, 1986
+ * published by the U.S. Government Printing Office.
+ *
+ * The program uses as a default the PLAN404 approximations to DE404
+ * for planetary positions.
+ *
+ * Warning! Your atan2() function may not work the same as the one
+ * assumed by this program.
+ * atan2(x,y) computes atan(y/x), result between 0 and 2pi.
+ *
+ * S. L. Moshier, November, 1987
+ */
+
+/*
+ * lua_aa.c: Removed extern main(...) and merged aa.c, conjunct.c, and
+ * moonrise.c together. - Serdar Sayın
+ *
+ * All credit goes to S. L. Moshier
+ * */
+
+#include <stdlib.h>
+
 double DTR = 1.7453292519943295769e-2;
 double RTD = 5.7295779513082320877e1;
 double RTS = 2.0626480624709635516e5;  /* arc seconds per radian */
 double STR = 4.8481368110953599359e-6; /* radians per arc second */
 double PI = 3.14159265358979323846;
 extern double PI;
+
+// conjunct.c
+double TPI = 6.28318530717958647693;
 
 /* Standard epochs.  Note Julian epochs (J) are measured in
  * years of 365.25 days.
@@ -184,4 +213,296 @@ int prtflg = 1;
 static double djd = 1.0;
 static int ntab = 1;
 
-struct orbit *elobject; /* pointer to orbital elements of object */
+struct orbit *elobject;
+
+// conjunct.c
+
+struct orbit objorb = {"Object         ",
+                       2446800.5,
+                       0.0,
+                       0.0,
+                       102.884,
+                       0.999999,
+                       0.985611,
+                       0.016713,
+                       1.1791,
+                       2446800.5,
+                       -3.86,
+                       0.0,
+                       0, /* &ear404, */
+                       0.0,
+                       0.0,
+                       0.0};
+
+double func(double t);
+int apparent(double p[], double q[]);
+
+/* pointer to orbital elements of object */
+/* Find apparent coordinates of object at Julian date TDT.
+   Q is heliocentric position of object.
+   P is geocentric, object minus earth.
+   Both outputs are in equatorial rectangular coordinates
+   and are referred to the equinox and ecliptic of date.  */
+int apparent(double p[], double q[]) {
+  double polar[3];
+  int i;
+  static double TDTearth = -1.0e38;
+
+  /* Calculate heliocentric position of the earth */
+  if (TDTearth != TDT) {
+    kepler(TDT, &earth, rearth, eapolar);
+    TDTearth = TDT;
+  }
+
+  if (objnum == 3) {
+    moonll(TDT, p, polar);
+    for (i = 0; i < 3; i++) {
+      q[i] = p[i] + rearth[i];
+    }
+    return 0;
+  } else if (objnum == 0) {
+    for (i = 0; i < 3; i++) {
+      q[i] = 0.0;
+      p[i] = -rearth[i];
+    }
+  } else if ((objnum > 0) && (objnum < 10)) {
+    kepler(TDT, &objorb, q, polar);
+  } else
+    exit(1);
+
+  /* Adjust for light time (planetary aberration)
+   */
+  if (objnum != 0)
+    lightt(&objorb, q, rearth);
+
+  /* Find Euclidean vectors between earth, object, and the sun
+   */
+  for (i = 0; i < 3; i++)
+    p[i] = q[i] - rearth[i];
+
+  angles(p, q, rearth);
+
+  /* Find unit vector from earth in direction of object
+   */
+  for (i = 0; i < 3; i++)
+    p[i] /= EO;
+
+  /* Correct position for light deflection
+   */
+  if (objnum != 0)
+    relativity(p, q, rearth);
+
+  /* Correct for annual aberration
+   */
+  annuab(p);
+
+  /* Precession of the equinox and ecliptic
+   * from J2000.0 to ephemeris date
+   */
+  precess(p, TDT, -1);
+
+  /* Ajust for nutation
+   * at current ecliptic.
+   */
+  epsiln(TDT);
+  nutate(TDT, p);
+
+  /* Return dimensions in au.  */
+  for (i = 0; i < 3; i++)
+    p[i] *= EO;
+  return 0;
+}
+
+/* Search for desired conjunction.
+   Step forward DELTA days from date T.  Then begin searching
+   for the date at which the desired function equals Y.  */
+double search(double t, double y, double delta) {
+  double tl, tm, th, yl, ym, yh, e;
+
+  tl = t;
+  yl = func(t);
+  th = tl + delta;
+  yh = yl;
+  /* Bracket the solution date.  */
+  do {
+    tl = th;
+    yl = yh;
+    th = th + 1.0;
+    yh = func(th);
+    e = yh - y;
+    if (e > PI) {
+      e -= TPI;
+      yh -= TPI;
+    }
+    if (e < -PI) {
+      e += TPI;
+      yh += TPI;
+    }
+  } while (e < 0);
+
+  /* Search by simple interval halving.  */
+  while ((th - tl) > .00001) {
+    tm = 0.5 * (tl + th);
+    ym = func(tm);
+    e = ym - y;
+    if (e > PI) {
+      e -= TPI;
+      ym -= TPI;
+    }
+    if (e < -PI) {
+      e += TPI;
+      ym += TPI;
+    }
+    if (e > 0) {
+      yh = ym;
+      th = tm;
+    } else {
+      yl = ym;
+      tl = tm;
+    }
+  }
+  tm = tl + (th - tl) * (y - yl) / (yh - yl);
+  return (tm);
+}
+
+// I will figure out what to do with these later - SS
+#define NEWMOON 1
+#define FULLMOON 1
+#undef EQUINOX
+
+/* Compute desired relation of apperent ecliptic longitude
+   as a function of the ephemeris date.  */
+double func(double t) {
+  double p[3], q[3], polar[3];
+  double s;
+#if NEWMOON || FULLMOON
+  double m;
+#endif
+
+  TDT = t;
+  /* Longitude of the sun.  */
+  objnum = 0;
+  apparent(p, q);
+  lonlat(p, TDT, polar, 0);
+  s = polar[0];
+#if NEWMOON || FULLMOON
+  /* Longitude of the moon.  */
+  objnum = 3;
+  apparent(p, q);
+  lonlat(p, TDT, polar, 0);
+  m = polar[0];
+  return (s - m);
+#endif
+#if EQUINOX
+  return s;
+#endif
+}
+
+// moonrise.c
+
+/* Results computed by domoon.c  */
+/* Transit, rise, and set times in radians (2 pi = 1 day) */
+extern int f_trnsit;
+extern double r_trnsit;
+extern double r_rise;
+extern double r_set;
+
+// marking these extern
+extern double t_trnsit;
+extern double t_rise;
+extern double t_set;
+
+void func_moon(double t);
+double search_moon(double t);
+
+double search_moon(double t) {
+  double JDsave, TDTsave, UTsave;
+  double date_save, date, t0, t1;
+  double rise1, set1, trnsit1;
+
+  JDsave = JD;
+  TDTsave = TDT;
+  UTsave = UT;
+  date_save = floor(t - 0.5) + 0.5;
+
+  /* Find transit time. */
+  date = date_save;
+  func_moon(t);
+  do {
+    if (r_trnsit < 0.0) {
+      date -= 1.0;
+      r_trnsit += TPI;
+    }
+    if (r_trnsit > TPI) {
+      date += 1.0;
+      r_trnsit -= TPI;
+    }
+    t0 = date + r_trnsit / TPI;
+    func_moon(t0);
+    t1 = date + r_trnsit / TPI;
+  } while (fabs(t1 - t0) > .0001);
+
+  t_trnsit = t1;
+  trnsit1 = r_trnsit;
+  set1 = r_set;
+  if (f_trnsit == 0)
+    goto sdone;
+
+  /* Set current date to be that of the transit just found.  */
+  date_save = date;
+  do {
+    if (r_rise < 0.0) {
+      date -= 1.0;
+      r_rise += TPI;
+    }
+    if (r_rise > TPI) {
+      date += 1.0;
+      r_rise -= TPI;
+    }
+    t0 = date + r_rise / TPI;
+    func_moon(t0);
+    t1 = date + r_rise / TPI;
+  } while (fabs(t1 - t0) > .0001);
+  rise1 = r_rise;
+  t_rise = t1;
+
+  date = date_save;
+  r_set = set1;
+  do {
+    if (r_set < 0.0) {
+      date -= 1.0;
+      r_set += TPI;
+    }
+    if (r_set > TPI) {
+      date += 1.0;
+      r_set -= TPI;
+    }
+    t0 = date + r_set / TPI;
+    func_moon(t0);
+    t1 = date + r_set / TPI;
+  } while (fabs(t1 - t0) > .0001);
+
+  t_set = t1;
+  r_trnsit = trnsit1;
+  r_rise = rise1;
+  /*  printf("%.15e %.15e %.15e\n", rise1, trnsit1, set1); */
+sdone:
+  JD = JDsave;
+  TDT = TDTsave;
+  UT = UTsave;
+  return t_trnsit;
+}
+
+/* Compute estimate of lunar rise and set times.  */
+void func_moon(double t) {
+  int prtsave;
+
+  prtsave = prtflg;
+  prtflg = 0;
+  objnum = 3;
+  JD = t;
+  update(); /* find UT */
+  kepler(TDT, &earth, rearth, eapolar);
+  domoon();
+  prtflg = prtsave;
+}
