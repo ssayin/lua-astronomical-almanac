@@ -4,7 +4,7 @@ local library_path = (function()
 	return "../build/liblua_aa.so"
 end)()
 
-local lib_aa = ffi.load(library_path)
+local aa = ffi.load(library_path)
 
 ffi.cdef([[
 
@@ -168,16 +168,18 @@ extern double sinh(double);
 extern double cosh(double);
 extern double tanh(double);
 extern char *whatconstel (double *, double);
+
+/* see: lua_aa.c */
+extern struct orbit venus;
+extern struct orbit mercury;
+extern struct orbit venus;
+extern struct orbit earth;
+extern struct orbit mars;
+extern struct orbit jupiter;
+extern struct orbit saturn;
+extern struct orbit uranus;
+extern struct orbit neptune;
+extern struct orbit pluto;
 ]])
-
-local aa = {}
-
-aa.kinit = function()
-	lib_aa.kinit()
-end
-
-aa.sqrt = function(val)
-	return lib_aa.sqrt(val)
-end
 
 return aa
